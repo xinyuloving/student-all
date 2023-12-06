@@ -28,3 +28,16 @@ Vue.prototype.TIM = TIM;
 //  6) ccl_1   ------>    课堂测试答题器
 //  7) ccl_1   ------>    抢答模块
 //  8) ccl_1   ------>    教学反馈
+
+export async function checkUserIMStatus(userIDList = []) {
+    try {
+      const {
+        data: { successUserList = [] },
+      } = await tim.getUserStatus({ userIDList })
+  
+      return successUserList
+    } catch (error) {
+      console.log(error)
+      return []
+    }
+  }

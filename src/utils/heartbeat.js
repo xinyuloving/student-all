@@ -1,11 +1,14 @@
 import sendMessage from './sendMessage'
 import store from '@/store'
 import router from "@/router/index"
+import { checkUserIMStatus } from './im'
+import TIM from 'tim-js-sdk'
 
 // store.state.imStore.heartbeatFailTimes
 
 let timer1;
 let timer2;
+let timer3
 
 function receptionHeartbeat(cb) {
     console.log("收到教师的心跳包");
@@ -95,8 +98,23 @@ function resetAll() {
     // }
 }
 
+function handleUserIMStatus(userIDList = [], cb) {
+    // IM 状态相关的处理函数
+    clearInterval(timer3)
+  
+    timer3 = setInterval(async () => {
+      const [{ statusType }] = await checkUserIMStatus(userIDList)
+  
+      if (statusType === TIM.TYPES.USER_STATUS_OFFLINE) {
+        // 离线
+        cb && cb()
+      }
+    }, 10000)
+  }
+
 export {
     receptionHeartbeat,
     tearcherStopTheHeart,
-    exitCloudClassromm
+    exitCloudClassromm,
+    handleUserIMStatus
 }
