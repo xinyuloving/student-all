@@ -51,8 +51,8 @@ import { handleUserIMStatus } from '@/utils/heartbeat.js'
 export default {
   name: 'App',
   created() {
-    // this.setToken("7b492714-764d-4d1e-9149-6ca5db437b08"); // 部署线上应当注释
-    this.setToken(window.WebViewJavascript?.getToken()) // 部署线上不可注释
+    this.setToken("0fdf0d94-f11f-47d1-b98c-ffe4a0e8f308"); // 部署线上应当注释
+    // this.setToken(window.WebViewJavascript?.getToken()) // 部署线上不可注释
     // this.handleBattery(); // 注释
     // console.log(window.WebViewJavascript.getToken());
     this.initListener() // 不可注释
@@ -70,6 +70,13 @@ export default {
       diaShow: false,
       isNotify: false,
       dialogVisible: false,
+
+      isOnIM: true,
+    }
+  },
+  provide(){
+    return {
+      isOnIM: () => this.isOnIM
     }
   },
   computed: {
@@ -81,7 +88,12 @@ export default {
   watch: {
     IMSdkState(newVal) {
       if (newVal) {
-        handleUserIMStatus([`1000${this.userInfo.id}`], this.loginIM)
+        handleUserIMStatus([`1000${this.userInfo.id}`], () => {
+          this.isOnIM = false
+          this.loginIM()
+        },() => {
+          this.isOnIM = true
+        })
       }
     },
   },

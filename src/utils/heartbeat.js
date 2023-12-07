@@ -98,7 +98,7 @@ function resetAll() {
     // }
 }
 
-function handleUserIMStatus(userIDList = [], cb) {
+function handleUserIMStatus(userIDList = [], cb, cb1) {
     // IM 状态相关的处理函数
     clearInterval(timer3)
   
@@ -108,6 +108,8 @@ function handleUserIMStatus(userIDList = [], cb) {
       if (statusType === TIM.TYPES.USER_STATUS_OFFLINE) {
         // 离线
         cb && cb()
+      }else if(statusType === TIM.TYPES.USER_STATUS_ONLINE){
+        cb1 && cb1()
       }
     }, 10000)
   }
