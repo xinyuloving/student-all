@@ -12,13 +12,10 @@
             <!-- 题目类型标签 -->
             <div class="type-tag">{{ tagName }}</div>
             <!-- 总分 -->
-            <div
-                class="total"
-                v-if="testData.answerStatus && testData.examPaperScore >= 0"
-            >
+            <div class="total" v-if="testData.answerStatus && testData.examPaperScore >= 0">
                 <img
                     :src="require(`@/assets/img/classroom/${item}.png`)"
-                    v-for="(item, index) in testData.examPaperScore + ''"
+                    v-for="(item, index) in (testData.examPaperScore + '')"
                     :key="index"
                 />
             </div>
@@ -32,10 +29,7 @@
             <!-- 题目 -->
             <div class="topic-content">
                 <div class="is-correct" v-if="testData.answerStatus">
-                    <i
-                        class="iconfont icon-duihao1"
-                        v-if="!topicInfo.answerResult"
-                    ></i>
+                    <i class="iconfont icon-duihao1" v-if="!topicInfo.answerResult"></i>
                     <i class="iconfont icon-cuo" v-else></i>
                 </div>
                 <div class="topic" v-html="topicList[currentIndex].topic"></div>
@@ -157,13 +151,11 @@
                     {{ index + 1 }}
                 </div>
             </div>
-            <div class="submit" v-if="!isSubmit && !testData.answerStatus">
-                <TButton
-                    class="submit-but"
-                    :disabled="isDisabled"
-                    @touch="openDialog"
-                    >提交</TButton
-                >
+            <div
+                class="submit"
+                v-if="!isSubmit && !testData.answerStatus"
+            >
+                <TButton class="submit-but" :disabled="isDisabled" @touch="openDialog">提交</TButton>
             </div>
         </div>
 
@@ -187,7 +179,7 @@
 import { submitTest } from "@/api/classroomTest";
 import ClassroomDialog from "@/components/classroomTest/classroomDialog.vue";
 import { mapMutations, mapState } from "vuex";
-import TButton from "@/components/publicMethods/TButton.vue";
+import TButton from '@/components/publicMethods/TButton.vue'
 
 // 用于储存当前题目的类型
 let topicType = -1;
@@ -206,7 +198,7 @@ export default {
 
     components: {
         ClassroomDialog,
-        TButton,
+        TButton
     },
 
     data() {
@@ -298,14 +290,13 @@ export default {
                 this.submit();
             } else if (newValue === 2) {
                 // 留作业
-                this.resetCExam();
-                this.$store.commit("cloudClassroom/setState", {
-                    objKey: "visibleGroup",
-                    key: "classTest",
-                    value: false,
-                });
                 this.exit();
             }
+            this.$store.commit("cloudClassroom/setState", {
+                objKey: "visibleGroup",
+                key: "classTest",
+                value: false,
+            });
         },
     },
 
@@ -323,11 +314,7 @@ export default {
     },
 
     methods: {
-        ...mapMutations("classroomTest", [
-            "setAnswerList",
-            "removeAnswer",
-            "resetCExam",
-        ]),
+        ...mapMutations("classroomTest", ["setAnswerList", "removeAnswer"]),
         // 退出
         exit() {
             if (this.testData.answerStatus) return this.$emit("toAnswer", -1);
@@ -415,7 +402,7 @@ export default {
                     }
                 }
                 const res = await submitTest(JSON.stringify(obj));
-                // console.log(res);
+                console.log(res);
                 if (res.code === 0) {
                     this.$emit("updateInfo");
                     this.dialogType = 1;
@@ -425,24 +412,13 @@ export default {
                     } else {
                         this.removeAnswer(this.testData.teacherPublishId);
                     }
-
-                    // 埋点：判断是否从云课堂进入
-                    const isEnterFromCloudClassroom =
-                        this.cExam.publishId && this.cExam.examName;
-
-                    this.data_exitPage(
-                        isEnterFromCloudClassroom
-                            ? { eventId: "answerTime", logValue: "3" }
-                            : "browseTime",
-                        isEnterFromCloudClassroom
-                    );
                 } else {
                     throw new Error();
                 }
             } catch (err) {
                 this.dialogType = 2;
-                this._msg("提交失败", err);
-                // console.log(err);
+                this._msg('提交失败', err);
+                console.log(err);
             }
         },
         // 获取当前题目的类型名称
@@ -466,7 +442,7 @@ export default {
                     } else {
                         this.rightList.push({ already: false });
                     }
-                    // console.log(item);
+                    console.log(item);
                 });
                 this.topicInfo = this.topicList[this.currentIndex];
                 return;
@@ -510,7 +486,6 @@ export default {
     created() {
         topicType = this.topicList[0].type;
         this.dataInit();
-        this.data_enterPage();
     },
 };
 </script>
@@ -523,10 +498,10 @@ export default {
     height: 100%;
     color: #333;
     .icon-duihao1 {
-        color: #0bc75b;
+        color: #0BC75B;
     }
     .icon-cuo {
-        color: #f35e5e;
+        color: #F35E5E;
     }
     .out {
         width: 78px;
@@ -584,7 +559,7 @@ export default {
             font-size: 24px;
             font-weight: 500;
             margin-top: 30px;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             text-align: center;
         }
         .topic-content {
@@ -597,7 +572,7 @@ export default {
         .topic {
             margin: 0 0 20px;
             padding: 0 66px;
-            height: 120px;
+            height: 200px;
             overflow-y: auto;
             /deep/ .option-box {
                 display: flex;
@@ -609,16 +584,15 @@ export default {
             }
         }
         .analysis {
-            padding: 0 66px;
             font-size: 18px;
             color: #3e83f8;
-            margin-top: 40px;
+            margin-top: 0px;
             position: relative;
             overflow: hidden;
             height: 165px;
             .box {
                 transition: all 0.2s;
-                width: 774px;
+                width: 100%;
                 height: 125px;
                 position: absolute;
                 color: #333;

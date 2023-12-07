@@ -51,7 +51,7 @@ import { handleUserIMStatus } from '@/utils/heartbeat.js'
 export default {
   name: 'App',
   created() {
-    // this.setToken("7b492714-764d-4d1e-9149-6ca5db437b08"); // 部署线上应当注释
+    // this.setToken("48f1b154-c37b-4e0c-9259-6e520261fa31"); // 部署线上应当注释
     this.setToken(window.WebViewJavascript?.getToken()) // 部署线上不可注释
     // this.handleBattery(); // 注释
     // console.log(window.WebViewJavascript.getToken());
@@ -117,13 +117,13 @@ export default {
       // event.name - TIM.EVENT.SDK_READY
       const SdkStatus = name === this.TIM.EVENT.SDK_READY ? true : false
       this.setState({ key: 'IMSdkState', value: SdkStatus })
-      // console.log("更新状态");
+      console.log("更新状态");
     },
     onReceiveMessage({ data: messageList }) {
       // 收到新消息的处理函数
       // event.name - TIM.EVENT.MESSAGE_RECEIVED
       // event.data - 存储 Message 对象的数组 - [Message]
-      // console.log("收到新消息", messageList);
+      console.log("收到新消息", messageList);
       // "@TIM#SYSTEM" 表示 群系统消息
       // if (messageList[0].conversationID !== "@TIM#SYSTEM") {
       //     this.setMessage(messageList[0].payload);
@@ -181,8 +181,8 @@ export default {
       // 收到会话列表更新通知，可通过遍历 event.data 获取会话列表数据并渲染到页面
       // event.name - TIM.EVENT.CONVERSATION_LIST_UPDATED
       // event.data - 存储 Conversation 对象的数组 - [Conversation]
-      // console.log("会话列表更新");
-      // console.log(event);
+      console.log("会话列表更新");
+      console.log(event);
     },
     onNetStateChange(event) {
       // 网络监测
@@ -192,7 +192,7 @@ export default {
       //     \- TIM.TYPES.NET_STATE_CONNECTED - 已接入网络
       //     \- TIM.TYPES.NET_STATE_CONNECTING - 连接中。很可能遇到网络抖动，SDK 在重试。接入侧可根据此状态提示“当前网络不稳定”或“连接中”
       //    \- TIM.TYPES.NET_STATE_DISCONNECTED - 未接入网络。接入侧可根据此状态提示“当前网络不可用”。SDK 仍会继续重试，若用户网络恢复，SDK 会自动同步消息
-      // console.log("网络出错");
+      console.log("网络出错");
 
       this.checkoutNetState(event.data.state)
       // console.log(event);
