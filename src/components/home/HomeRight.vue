@@ -3,6 +3,7 @@
         <div class="right-top">
             <i></i>
             <span>应用工具</span>
+            <span>IM: {{ isOnIM() ? 'on' : 'off' }}</span>
         </div>
         <div class="right-bottom">
             <swiper
@@ -53,6 +54,7 @@ export default {
         swiperSlide,
         TButton,
     },
+    inject: ['isOnIM'],
     data() {
         return {
             rightSwiperOption: {
