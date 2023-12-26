@@ -27,6 +27,7 @@
                     :src="
                         require(`../../assets/img/student_figure/${
                             userInfo.figure || 1
+                            // userInfo.realName || 1 //智慧学中文，绑定形象
                         }.png`)
                     "
                 />

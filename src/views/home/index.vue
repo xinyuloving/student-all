@@ -3,6 +3,7 @@
         <!-- 首页 -->
         <div class="top">
             <span>日 新 于 博 · 尽 美 于 雅</span>
+            <!-- <span>智 慧 学 中 文</span> -->
             <!-- <img src="../../assets/img/motto1.png" alt="" /> -->
         </div>
         <div class="bottom">

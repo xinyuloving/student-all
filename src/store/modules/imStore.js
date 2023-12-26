@@ -69,7 +69,7 @@ const actions = {
         // 事件派发
         const { payload: { extension: ext, description } } = e;
         const extension = JSON.parse(ext); // 扩展字段
-        // console.log("收到老师发来的消息 --> ", extension);
+        console.log("收到老师发来的消息 --> ", extension);
         switch (description) {
             case 'ccl_1': {
                 // 进入/结束 云课堂 做的事

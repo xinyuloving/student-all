@@ -3,7 +3,7 @@
         <div class="right-top">
             <i></i>
             <span>应用工具</span>
-            <span>IM: {{ isOnIM() ? 'on' : 'off' }}</span>
+            <span>&nbsp;&nbsp;&nbsp;IM: {{ isOnIM() ? 'on' : 'off' }}</span>
         </div>
         <div class="right-bottom">
             <swiper
