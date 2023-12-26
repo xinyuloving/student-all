@@ -52,7 +52,7 @@ export default {
   name: 'App',
   created() {
 
-    this.setToken("509f60c6-3e0c-4363-80ee-c87580b192c0"); // 部署线上应当注释
+    this.setToken("026fd716-79e3-4451-ba3a-62d79d9e3cf9"); // 部署线上应当注释
     // this.setToken(window.WebViewJavascript?.getToken()) // 部署线上不可注释
 
     // this.handleBattery(); // 注释

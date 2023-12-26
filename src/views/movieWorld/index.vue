@@ -14,7 +14,7 @@
           :key="index"
           v-touch="
             () => {
-              checkedNum = index;
+              checkedNum = index
             }
           "
         >
@@ -39,7 +39,7 @@
             v-if="isUpdate"
             v-touch="
               () => {
-                videoPreview(item);
+                videoPreview(item)
               }
             "
           >
@@ -66,13 +66,22 @@
             v-if="isUpdate"
             v-touch="
               () => {
-                imgPreview(item.url);
+                imgPreview(item)
               }
             "
           >
             <!-- <img :src="item.url[0]" /> -->
-            <OccupiedPicture :url="item.url[0]" :width="438" :height="246" />
-            <span class="text">{{ item.title | filterName }}</span>
+            <OccupiedPicture
+              v-if="item.type === 2"
+              :url="item.url[0]"
+              :width="438"
+              :height="246"
+            />
+            <div v-else class="preview-text" v-html="item.parsedText"></div>
+
+            <span v-if="item.type === 2" class="text">{{
+              item.title | filterName
+            }}</span>
           </div>
         </div>
         <DefalutPage
@@ -89,23 +98,25 @@
       :url="previewVideo"
       :thumbnailUrl="previewThumbnail"
       :urlList="previewImg"
+      :previewData="previewData"
       @close="isPreview = false"
     ></ContentPreview>
   </div>
 </template>
 
 <script>
-import LeftSidebar from "@/components/movieWorld/leftSidebar.vue";
-import ContentPreview from "@/components/movieWorld/contentPreview.vue";
-import { getBlogList } from "@/api/blog";
-import DefalutPage from "@/components/publicMethods/DefalutPage.vue";
-import OccupiedPicture from "@/components/publicMethods/OccupiedPicture.vue";
-import TButton from "@/components/publicMethods/TButton.vue";
-import Loading from "@/components/publicMethods/Loading.vue";
+import LeftSidebar from '@/components/movieWorld/leftSidebar.vue'
+import ContentPreview from '@/components/movieWorld/contentPreview.vue'
+import { getBlogList } from '@/api/blog'
+import DefalutPage from '@/components/publicMethods/DefalutPage.vue'
+import OccupiedPicture from '@/components/publicMethods/OccupiedPicture.vue'
+import TButton from '@/components/publicMethods/TButton.vue'
+import Loading from '@/components/publicMethods/Loading.vue'
+import cos from '@/utils/cos.js'
 
 export default {
   // 组件名
-  name: "MovieWorld",
+  name: 'MovieWorld',
   // 注册子组件
   components: {
     LeftSidebar,
@@ -117,8 +128,8 @@ export default {
   },
   filters: {
     filterName(key) {
-      if (key.indexOf("1^_^2") !== -1) return key.split("1^_^2")[1];
-      return key;
+      if (key.indexOf('1^_^2') !== -1) return key.split('1^_^2')[1]
+      return key
     },
   },
   // 组件数据
@@ -133,130 +144,168 @@ export default {
         schoolCode: this.$store.getters.schoolCode, // 学校code
       },
       isPreview: false, // 是否预览
-      previewThumbnail: "", // 要预览的视频封面链接
-      previewVideo: "", // 要预览的视频链接
+      previewThumbnail: '', // 要预览的视频封面链接
+      previewVideo: '', // 要预览的视频链接
       previewImg: [], // 要预览的图片链接
       type: null, // 用于判断当前页的显示内容 0.图文中国  1.影像世界
-      categoryList: [[], [], [], [], []], // 图片数据
+      categoryList: [[], [], [], [], [], [], []], // 图片数据（图片/文本数据）
       videoCategory: [[], [], [], [], []], // 视频数据
       isUpdate: true, // 判断是否更新
       previewType: -1,
       loading: false,
-    };
+
+      previewData: {}, // 当前点击要预览的对象
+    }
   },
   methods: {
     // 获取列表数据
     async getBlogList() {
       try {
-        this.loading = true;
-        const { data } = await getBlogList(this.reqConfig);
-        const videoList = data.filter((item) => item.type === 1);
-        const imgList = data.filter((item) => item.type === 2);
+        this.loading = true
+        const { data } = await getBlogList(this.reqConfig)
+        // "type": 0, 文本
+        // "type": 1, 视频
+        // "type": 2, 图片
+        const videoList = data.filter((item) => item.type === 1)
+        const imgList = data.filter((item) => [0, 2].includes(item.type)) // 图文中国中可能有图片 可能有文本
+
+        console.log(imgList)
         // 处理图片数据
-        imgList.forEach((item) => {
-          item.url = JSON.parse(item.url);
-          const classify = item.title.split("1^_^2")[0];
-          if (classify === this.buttonList[0]) {
-            this.categoryList[0].push(item);
-          } else if (classify === this.buttonList[1]) {
-            this.categoryList[1].push(item);
-          } else if (classify === this.buttonList[2]) {
-            this.categoryList[2].push(item);
-          } else if (classify === this.buttonList[3]) {
-            this.categoryList[3].push(item);
-          } else if (classify === this.buttonList[4]) {
-            this.categoryList[4].push(item);
+        imgList.forEach(async (item) => {
+          item.url = item.type === 2 ? JSON.parse(item.url) : item.url
+
+          if (item.type === 0) {
+            // 获取解析后的文本
+            item.parsedText = await this.getContentInfo(item.url)
           }
-        });
+
+          const classify = item.title.split('1^_^2')[0]
+          if (classify === this.buttonList[0]) {
+            this.categoryList[0].push(item)
+          } else if (classify === this.buttonList[1]) {
+            this.categoryList[1].push(item)
+          } else if (classify === this.buttonList[2]) {
+            this.categoryList[2].push(item)
+          } else if (classify === this.buttonList[3]) {
+            this.categoryList[3].push(item)
+          } else if (classify === this.buttonList[4]) {
+            this.categoryList[4].push(item)
+          } else if (classify === this.buttonList[5]) {
+            this.categoryList[5].push(item)
+          } else if (classify === this.buttonList[6]) {
+            this.categoryList[6].push(item)
+          }
+        })
         // 处理视频数据
         videoList.forEach((item) => {
-          const classify = item.title.split("1^_^2")[0];
+          const classify = item.title.split('1^_^2')[0]
           if (classify === this.buttonList[0]) {
-            this.videoCategory[0].push(item);
+            this.videoCategory[0].push(item)
           } else if (classify === this.buttonList[1]) {
-            this.videoCategory[1].push(item);
+            this.videoCategory[1].push(item)
           } else if (classify === this.buttonList[2]) {
-            this.videoCategory[2].push(item);
+            this.videoCategory[2].push(item)
           } else if (classify === this.buttonList[3]) {
-            this.videoCategory[3].push(item);
+            this.videoCategory[3].push(item)
           } else if (classify === this.buttonList[4]) {
-            this.videoCategory[4].push(item);
+            this.videoCategory[4].push(item)
           }
-        });
-        this.loading = false;
+        })
+        this.loading = false
       } catch (err) {
-        this.loading = false;
-        this._msg("请求超时，请重试！");
+        this.loading = false
+        this._msg('请求超时，请重试！')
       }
     },
     // 视频预览
     videoPreview(item) {
       // console.log(item);
       // window.WebViewJavascript.gotoPlayVideo(item.url);
-      this.previewThumbnail = item.thumbnailUrl;
-      this.previewVideo = item.url;
-      this.previewImg = [];
-      this.previewType = 1;
-      this.isPreview = true;
+      this.previewThumbnail = item.thumbnailUrl
+      this.previewVideo = item.url
+      this.previewImg = []
+      this.previewType = 1
+      this.isPreview = true
     },
     // 图片预览
-    imgPreview(url) {
+    imgPreview(item) {
+      const { url, type } = item
+      this.previewData = item
       // console.log(url);
-      this.previewThumbnail = "";
-      this.previewVideo = "";
-      this.previewImg = url;
-      this.previewType = -1;
-      this.isPreview = true;
+      this.previewThumbnail = ''
+      this.previewVideo = ''
+      this.previewImg = url
+      this.previewType = type === 0 ? 4 : -1
+      this.isPreview = true
     },
     // 返回上一页
     retreat() {
-      this.$router.go(-1);
+      this.$router.go(-1)
+    },
+
+    // 获取文章内容
+    async getContentInfo(url) {
+      try {
+        const res = await cos.getFile({
+          type: 2,
+          key: this.getFileName(url),
+        })
+
+        return res
+      } catch (err) {
+        console.log('获取文章内容 err:' + err)
+      }
+    },
+
+    // 获取存储桶中的文件名
+    getFileName(url) {
+      return url.slice(url.lastIndexOf('/') + 1)
     },
   },
   created() {
-    this.type = parseInt(this.$route.query.type);
+    this.type = parseInt(this.$route.query.type)
     if (this.type === 0) {
       // this.buttonList = ['美丽家乡', '青春风采', '自然地理', '文化经典', '中华美食']
       this.buttonList = [
-        "必背古诗",
-        "课外读物",
-        "学校风采",
-        "特色课程",
-        "百科知识",
-        "艺术生活",
-        "人物故事",
-      ];
+        '必背古诗',
+        '课外读物',
+        '学校风采',
+        '特色课程',
+        '百科知识',
+        '艺术生活',
+        '人物故事',
+      ]
     } else {
       // this.buttonList = ['学校风采', '特色课程', '百科知识', '艺术生活', '人物故事']
       this.buttonList = [
-        "光影记忆",
-        "印象中国",
-        "健康安全",
-        "融媒中心",
-        "校园风采",
-      ];
+        '光影记忆',
+        '印象中国',
+        '健康安全',
+        '融媒中心',
+        '校园风采',
+      ]
     }
-    this.getBlogList();
+    this.getBlogList()
   },
   watch: {
     // 当切换分类时触发
     checkedNum() {
-      this.isUpdate = false;
+      this.isUpdate = false
       setTimeout(() => {
-        this.isUpdate = true;
-      }, 10);
+        this.isUpdate = true
+      }, 10)
     },
     isPreview(val) {
-      const logValue = this.type + 1 + "";
+      const logValue = this.type + 1 + ''
       if (val) {
-        this.data_enterPage();
-        this.data_triggerEvent({ eventId: "browseContent", logValue });
+        this.data_enterPage()
+        this.data_triggerEvent({ eventId: 'browseContent', logValue })
       } else {
-        this.data_exitPage({ eventId: "browseConTime", logValue });
+        this.data_exitPage({ eventId: 'browseConTime', logValue })
       }
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>
@@ -382,6 +431,11 @@ ul {
             bottom: 8px;
             font-size: 20px;
             color: #fff;
+          }
+
+          .preview-text {
+            padding: 10px;
+            line-height: 26px;
           }
         }
       }

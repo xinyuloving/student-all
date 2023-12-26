@@ -24,7 +24,12 @@ const Buckets = (function () {
             {
                 Bucket: 'develop-paper-1253352532',
                 Region: 'ap-shanghai'
-            }
+            },
+            // 链接世界
+            {
+                Bucket: 'develop-blog-1253352532',
+                Region: 'ap-shanghai'
+            },
         ]
     } else if (process.env.NODE_ENV === 'preannouncement') {
         // 预发布环境
@@ -38,7 +43,12 @@ const Buckets = (function () {
             {
                 Bucket: 'pre-release-paper-1253352532',
                 Region: 'ap-shanghai'
-            }
+            },
+            // 链接世界
+            {
+                Bucket: 'pre-release-blog-1253352532',
+                Region: 'ap-shanghai'
+            },
         ]
     } else if (process.env.NODE_ENV === 'production') {
         // 生产环境
@@ -52,7 +62,13 @@ const Buckets = (function () {
             {
                 Bucket: 'release-paper-1253352532',
                 Region: 'ap-shanghai'
-            }
+            },
+            // 链接世界
+            {
+                Bucket: 'release-blog-1253352532',
+                Region: 'ap-shanghai'
+            },
+
         ]
     } else if (process.env.NODE_ENV === 'ningxia') {
         // 宁夏环境
@@ -66,7 +82,12 @@ const Buckets = (function () {
             {
                 Bucket: 'ningxia-paper-1253352532',
                 Region: 'ap-shanghai'
-            }
+            },
+             // 链接世界
+             {
+                Bucket: 'ningxia-blog-1253352532',
+                Region: 'ap-shanghai'
+            },
         ]
     } else if (process.env.NODE_ENV === 'testing') {
         // 测试环境
